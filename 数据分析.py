@@ -1,66 +1,66 @@
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-import openpyxl
-from openpyxl.utils import get_column_letter
-import openai
-import warnings
-warnings.filterwarnings('ignore')
+import streamlit  streamlit  streamlit  streamlit as st st st st
+import pandas  pandas  pandas  pandas as pd pd pd pd
+import plotly.express  plotly.express  plotly.express  plotly.express as px px px px
+import openpyxl openpyxl openpyxl openpyxl
+from openpyxl.utils  openpyxl.utils  openpyxl.utils  openpyxl.utils import get_column_letter get_column_letter get_column_letter get_column_letter
+import openai openai openai openai
+import warnings warnings warnings warnings
+warnings.warnings.warnings..warnings....warnings........filterwarnings('ignore')
 
 # ---------------------- 配置 ChatGPT ----------------------
 # 推荐用 Streamlit Secrets 管理 API Key（部署时在 Streamlit Cloud 配置）
-openai.api_key = st.secrets.get("OPENAI_API_KEY", "")
+openai.openai.openai..openai....api_key = st. = st. = st. = st. = st. = st. = st. = st.secrets........get("OPENAI_API_KEY", , , , , , , , "")
 
 # 页面配置
-st.set_page_config(
-    page_title="ChatGPT 增强版智能表格分析工具",
-    page_icon="🤖📊",
-    layout="wide"
+st.st.st..set_page_config(
+    page_title=    page_title="ChatGPT 增强版智能表格分析工具",,
+    page_icon=    page_icon="🤖📊",,
+    layout=    layout="wide"
 )
 
-st.title("🤖📊 ChatGPT 增强版智能表格分析工具")
-st.markdown("### ✨ 任意格式表格 + 自然语言精准分析（支持复杂指令）")
+st.st.st..st....st........title("🤖📊 ChatGPT 增强版智能表格分析工具")
+st.st.st..st....st........markdown("### ✨ 任意格式表格 + 自然语言精准分析（支持复杂指令）")
 
 # ---------------------- 核心1：智能表格解析（修复 openpyxl 版本兼容） ----------------------
-def smart_parse_excel(file, sheet_name=None):
+def smart_parse_excel(file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=file, sheet_name=None)::::::::::::::::
     """智能解析Excel，自动定位有效数据，兼容任意格式"""
-    if sheet_name is None:
-        xl_file = pd.ExcelFile(file)
-        sheet_names = xl_file.sheet_names
-        all_data = {}
-        for name in sheet_names:
-            df = parse_single_sheet(file, name)
-            if not df.empty:
-                all_data[name] = df
-        return all_data
-    else:
-        df = parse_single_sheet(file, sheet_name)
-        return {sheet_name: df}
+    if sheet_name  sheet_name  sheet_name  sheet_name is None::::
+        xl_file = pd.                xl_file = pd.        xl_file = pd. = pd.ExcelFile(filefilefilefile)
+        sheet_names = xl_file.        sheet_names = xl_file.sheet_names
+        all_data =         all_data =         all_data =         all_data = {}
+        for name  name  name  name in sheet_names: sheet_names: sheet_names: sheet_names:
+            df =             df =             df =             df = parse_single_sheet(file, namefile, namefile, namefile, name)
+            if not df.   df.  df. . df....empty::::::::
+                all_data                all_data[namename] = df = df
+        return all_data all_data all_data all_data
+    else::::
+        df =         df = parse_single_sheet(file, sheet_namefile, sheet_name)
+        return {sheet_name: dfsheet_name: df}
 
-def parse_single_sheet(file, sheet_name):
+def parse_single_sheet(file, sheet_namefile, sheet_name)::
     """解析单个sheet，处理合并单元格、空行空列（修复 openpyxl 版本兼容）"""
-    wb = openpyxl.load_workbook(file, data_only=True)
-    ws = wb[sheet_name]
+    wb = openpyxl.    wb = openpyxl.load_workbook(file, data_only=file, data_only=True)
+    ws = wb    ws = wb[sheet_namesheet_name]
     
     # 修复：用 min_column/max_column 替代 min_col/max_col（新版 openpyxl 兼容）
-    min_row, max_row = ws.min_row, ws.max_row
-    min_col, max_col = ws.min_column, ws.max_column  # 关键修复行
+    min_row, max_row = ws.    min_row, max_row = ws.min_row, ws., ws.max_row
+    min_col, max_col = ws.    min_col, max_col = ws.min_column, ws., ws.max_column  # 关键修复行
     
     # 过滤全空行
-    valid_rows = []
-    for row in range(min_row, max_row + 1):
-        row_data = [ws.cell(row=row, column=col).value for col in range(min_col, max_col + 1)]
-        if any(cell is not None and str(cell).strip() != "" for cell in row_data):
-            valid_rows.append(row)
+    valid_rows =     valid_rows = []
+    for row  row in range(min_row, max_row + min_row, max_row + 1)::
+        row_data =         row_data = [ws.ws.cell(row=row, column=colrow=row, column=col)..value for col  col in range(min_col, max_col + min_col, max_col + 1)]
+        if any(cell cell is not None and str(cellcell)..strip() !=  != "" for cell  cell in row_data row_data)::
+            valid_rows.            valid_rows.append(rowrow)
     
     # 过滤全空列
-    valid_cols = []
-    for col in range(min_col, max_col + 1):
-        col_data = [ws.cell(row=row, column=col).value for row in valid_rows]
-        if any(cell is not None and str(cell).strip() != "" for cell in col_data):
-            valid_cols.append(col)
+    valid_cols =     valid_cols = []
+    for col  col in range(min_col, max_col + min_col, max_col + 1)::
+        col_data =         col_data = [ws.ws.cell(row=row, column=colrow=row, column=col)..value for row  row in valid_rows valid_rows]
+        if any(cell cell is not None and str(cellcell)..strip() !=  != "" for cell  cell in col_data col_data)::
+            valid_cols.            valid_cols.append(colcol)
     
-    if not valid_rows or not valid_cols:
+    if not valid_rows  valid_rows or not valid_cols: valid_cols:
         return pd.DataFrame()
     
     # 提取表头和数据
@@ -104,7 +104,7 @@ def parse_single_sheet(file, sheet_name):
 
 # ---------------------- 核心2：ChatGPT 自然语言解析 ----------------------
 def chatgpt_parse_query(df, query):
-    """调用 ChatGPT 解析自然语言指令，生成 Python 代码并执行分析"""
+    """调用 ChatGPT 解析自然语言指令，生成 Python 代码并执行分析（适配 OpenAI 1.0+ 新版本）"""
     # 生成精准提示词
     prompt = f"""
 你是一个专业的数据分析助手，现在有一个 DataFrame，列名如下：{df.columns.tolist()}。
@@ -119,9 +119,13 @@ def chatgpt_parse_query(df, query):
 - 确保代码可以直接运行，不要有语法错误
 """
     
-    # 调用 OpenAI API
+    # 调用 OpenAI API（适配 1.0+ 新版本）
     try:
-        response = openai.ChatCompletion.create(
+        # 初始化 OpenAI 客户端（新版必须用客户端方式调用）
+        client = openai.OpenAI(api_key=st.secrets.get("OPENAI_API_KEY", ""))
+        
+        # 新版接口调用方式
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "你是一个专业的数据分析助手，擅长将自然语言转换为 Pandas 代码。"},
@@ -129,7 +133,8 @@ def chatgpt_parse_query(df, query):
             ],
             temperature=0.1  # 降低随机性，保证代码稳定性
         )
-        code = response.choices[0].message['content'].strip()
+        # 新版获取返回内容的方式（注意是 .content 不是 ['content']）
+        code = response.choices[0].message.content.strip()
         return code
     except Exception as e:
         st.error(f"调用 ChatGPT 出错：{str(e)}")
@@ -254,3 +259,4 @@ try:
 except ImportError:
     install("openpyxl==3.1.2")
     import openpyxl
+
