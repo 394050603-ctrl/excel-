@@ -1,23 +1,5 @@
-# 核心Web框架（Streamlit）# 核心Web框架（Streamlit）
-streamlit>=1.30.0,<2.0.0streamlit>=1.30.0,<2.0.0
-
-# 数据处理核心库# 数据处理核心库
-pandas>=2.0.0,<3.0.0pandas>=2.0.0,<3.0.0
-numpy>=1.24.0,<2.0.0numpy>=1.24.0,<2.0.0
-
-# 可视化库# 可视化库
-plotly>=5.18.0,<6.0.0plotly>=5.18.0,<6.0.0
-
-# Excel文件读写# Excel文件读写
-openpyxl>=3.1.0,<4.0.0openpyxl>=3.1.0,<4.0.0
-xlrd>=2.0.0,<3.0.0  # 兼容旧版.xls文件xlrd>=2.0.0,<3.0.0  # 兼容旧版.xls文件
-
-# 可选：如果需要处理超大文件/分布式计算（可注释）# 可选：如果需要处理超大文件/分布式计算（可注释）
-# dask>=2023.1.0# dask>=2023.1.0
-# dask[dataframe]>=2023.1.0# dask[dataframe]>=2023.1.0
-
-# 可选：GPU加速（需NVIDIA显卡，可注释）# 可选：GPU加速（需NVIDIA显卡，可注释）
-# cudf-cu11>=23.08.0# cudf-cu11>=23.08.0
-# cupy-cuda11x>=12.0.0# cupy-cuda11x>=12.0.0
-
+# 核心Web框架（Streamlit）# 核心Web框架（Streamlit）streamlit>=1.30.0
+pandas>=2.2.0
+openpyxl==3.0.10  # 固定版本避免兼容问题
+plotly>=5.18.0
 openai>=1.0.0
