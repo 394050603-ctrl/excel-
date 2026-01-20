@@ -1,0 +1,13 @@
+.streamlit/secrets.toml
+# Python 编译文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 虚拟环境
+venv/
+.env
+
+# Streamlit 配置
+.streamlit/secrets.toml
