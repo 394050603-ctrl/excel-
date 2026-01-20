@@ -1,7 +1,8 @@
 # 核心Web框架（Streamlit）# 核心Web框架（Streamlit）
 streamlit>=1.30.0
 pandas>=2.2.0
-openpyxl==3.0.10  # 固定版本避免兼容问题
+openpyxl==3.1.2  # 固定版本避免兼容问题
 plotly>=5.18.0
 openai>=1.0.0
+
 
