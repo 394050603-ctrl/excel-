@@ -8,8 +8,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # ---------------------- 配置 ChatGPT ----------------------
-# 你需要在这里替换成自己的 OpenAI API Key
-openai.api_key = st.secrets.get("OPENAI_API_KEY", "")  # 推荐用 Streamlit Secrets 管理，更安全
+# 推荐用 Streamlit Secrets 管理 API Key（部署时在 Streamlit Cloud 配置）
+openai.api_key = st.secrets.get("OPENAI_API_KEY", "")
 
 # 页面配置
 st.set_page_config(
@@ -21,7 +21,7 @@ st.set_page_config(
 st.title("🤖📊 ChatGPT 增强版智能表格分析工具")
 st.markdown("### ✨ 任意格式表格 + 自然语言精准分析（支持复杂指令）")
 
-# ---------------------- 核心1：智能表格解析（保留原有能力） ----------------------
+# ---------------------- 核心1：智能表格解析（修复 openpyxl 版本兼容） ----------------------
 def smart_parse_excel(file, sheet_name=None):
     """智能解析Excel，自动定位有效数据，兼容任意格式"""
     if sheet_name is None:
@@ -38,13 +38,13 @@ def smart_parse_excel(file, sheet_name=None):
         return {sheet_name: df}
 
 def parse_single_sheet(file, sheet_name):
-    """解析单个sheet，处理合并单元格、空行空列"""
+    """解析单个sheet，处理合并单元格、空行空列（修复 openpyxl 版本兼容）"""
     wb = openpyxl.load_workbook(file, data_only=True)
     ws = wb[sheet_name]
     
-    # 定位有效数据区域
+    # 修复：用 min_column/max_column 替代 min_col/max_col（新版 openpyxl 兼容）
     min_row, max_row = ws.min_row, ws.max_row
-    min_col, max_col = ws.min_col, ws.max_col
+    min_col, max_col = ws.min_column, ws.max_column  # 关键修复行
     
     # 过滤全空行
     valid_rows = []
@@ -102,10 +102,10 @@ def parse_single_sheet(file, sheet_name):
     
     return df
 
-# ---------------------- 核心2：ChatGPT 自然语言解析（新增） ----------------------
+# ---------------------- 核心2：ChatGPT 自然语言解析 ----------------------
 def chatgpt_parse_query(df, query):
     """调用 ChatGPT 解析自然语言指令，生成 Python 代码并执行分析"""
-    # 1. 生成提示词，引导 ChatGPT 生成可执行的 Pandas 代码
+    # 生成精准提示词
     prompt = f"""
 你是一个专业的数据分析助手，现在有一个 DataFrame，列名如下：{df.columns.tolist()}。
 请根据用户的问题，生成可以直接在 Python 中执行的 Pandas 代码，仅输出代码，不要解释。
@@ -115,10 +115,11 @@ def chatgpt_parse_query(df, query):
 - 数据框变量名为 df
 - 只返回可执行的 Python 代码片段，不要包含任何解释或说明
 - 如果需要可视化，使用 plotly.express，变量名为 fig
+- 如果需要输出结果，将结果赋值给变量 result
 - 确保代码可以直接运行，不要有语法错误
 """
     
-    # 2. 调用 OpenAI API
+    # 调用 OpenAI API
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -195,7 +196,7 @@ if uploaded_files:
         # 执行分析按钮
         if st.button(f"🤖 用 ChatGPT 分析", key=f"exec_{file.name}"):
             if not openai.api_key:
-                st.error("请先配置你的 OpenAI API Key！")
+                st.error("请先在 Streamlit Secrets 中配置你的 OpenAI API Key！")
             elif user_query.strip() == "":
                 st.warning("请输入分析要求后再执行！")
             else:
