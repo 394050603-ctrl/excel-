@@ -242,3 +242,15 @@ if uploaded_files:
 
 else:
     st.info("✅ 请上传Excel文件（任意格式），支持：\n1. 自动解析无行列/格式限制\n2. ChatGPT 增强的自然语言精准分析")
+import subprocess
+import sys
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# 强制安装 openpyxl
+try:
+    import openpyxl
+except ImportError:
+    install("openpyxl==3.1.2")
+    import openpyxl
